@@ -1,0 +1,11 @@
+root
+admin
+test
+guest
+info
+adm
+user
+username
+login
+administrator
+password
