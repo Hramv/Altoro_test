@@ -11,7 +11,9 @@ The project implemented two information security test cases for checking input f
 ## Requirements
 
 python 3.12
+
 pytest 7.4
+
 selenium 4.18
 
 ## Install project
