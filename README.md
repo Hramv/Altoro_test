@@ -18,7 +18,7 @@ selenium 4.18
 
 ## Install project
 
-```
+```bash
 git clone https://github.com/Hramv/Altoro_test.git
 
 cd Altoro_test
@@ -27,7 +27,7 @@ cd Altoro_test
 
 ## Running
 
-```
+```bash
 
 pytest tests/test.py
 
