@@ -16,6 +16,10 @@ pytest 7.4
 
 selenium 4.18
 
+geckodriver 0.35
+
+You need to install Firefox web-driver to "/usr/local/bin/geckodriver"
+
 ## Install project
 
 ```bash
