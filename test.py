@@ -1,28 +1,8 @@
-from pages.AuthPage import AuthPage
-from utils.Driver import Driver
 import pytest
-
 from time import sleep
 
-
-class Parameters(object):
-    """
-    A Authorization Class that describes methods for testing login and 
-    search forms on the auth. page Altoromutual.
-
-    Attributes
-    ----------            
-    DEFAULT_USERS_DICT_URL     
-    DEFAULT_PASSWORDS_DICT_URL
-    TIME_OUT                    
-    """
-
-    DEFAULT_USERS_DICT_URL      = "tests/dicts/usernames.txt"
-    DEFAULT_PASSWORDS_DICT_URL  = "tests/dicts/passwords.txt"
-    TIME_OUT                    = 1
-    ERROR_MESSAGE               = \
-"Во время теста произошла не предвиденная ошибка.\
- Веб-ресурс Altoromutual скорее всего не доступен."
+from framework.pages.AuthPage import AuthPage
+from framework.const.Constants import BrowserConst, TestConst, AuthPageConst
 
 
 @pytest.fixture(scope="module")
@@ -83,3 +63,7 @@ def test_default_creds(page, default_creds_dict):
 
     assert not default_creds
 
+A = AuthPage()
+A.init_webdriver()
+sleep(1)
+A.close_webdriver()
