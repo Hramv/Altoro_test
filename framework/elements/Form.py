@@ -12,5 +12,5 @@ class Form(BaseElement):
         super().__init__(locator, name)
 
 
-    def send(self):
-        self.element.send_keys()
+    def send(self, message: str):
+        self.element.send_keys(message)

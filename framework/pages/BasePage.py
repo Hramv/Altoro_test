@@ -1,5 +1,5 @@
 from framework.utils.Driver import Driver
-from framework.const.Constants import PageConst
+
 
 class BasePage():
 
@@ -19,7 +19,12 @@ class BasePage():
 
 
     def __init__(self, page_url:str):
+        self.init_webdriver()
         self._url = page_url
+
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close_webdriver()
 
 
     def init_webdriver(self):
@@ -27,12 +32,10 @@ class BasePage():
 
 
     def close_webdriver(self):
-        self._driver.close() 
+        self._driver.close()
 
 
     def open(self):
-        self._driver.get(self._url)
-        self._driver.implicitly_wait(PageConst.LOAD_TIME)
-        
+        self._driver.open_page(self._url)       
     
       

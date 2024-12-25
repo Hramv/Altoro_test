@@ -1,6 +1,8 @@
 from framework.utils.Singletone import singleton
 from framework.utils.Drivers_builders import Builder
 from framework.const.Constants import BrowserConst
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 @singleton
 class Driver():
@@ -27,15 +29,17 @@ class Driver():
         self.close()
 
 
-    def open_page(self, url, load_time):
+    def open_page(self, url):
         self._driver.get(url)
-        self._driver.implicitly_wait(load_time)
 
 
-    def find_element(self, locator):
-        self._driver.find_element(locator)
-
+    def find_element(self, locator: tuple, timeout: int):
+        element = WebDriverWait(self._driver, timeout).\
+                       until(EC.presence_of_element_located(locator), \
+                       message=f"Еlement not found.")
+        return element
     
+
     def close(self):
         self._driver.quit()
 
