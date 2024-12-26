@@ -1,6 +1,8 @@
 from framework.utils.Singletone import singleton
 from framework.utils.Drivers_builders import Builder
 from framework.const.Constants import BrowserConst
+from framework.utils.Logger import Logger
+
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -21,8 +23,9 @@ class Driver():
             case BrowserConst.EDGE:
                 self._driver = Builder.edge_driver(executable_path)
             case _:
-                raise ValueError(
-    f"{BrowserConst.BROWSER} is not supported. Cannot build WebDriver.")
+                error_message = f"{BrowserConst.BROWSER} is not supported. Cannot build WebDriver."
+                Logger.error(error_message)
+                raise ValueError(error_message)
 
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -30,13 +33,19 @@ class Driver():
 
 
     def open_page(self, url):
-        self._driver.get(url)
+        try:
+            self._driver.get(url)
+        except:
+            Logger.error(f"An error occurred while trying to load the page {url}.")
+            self.close()
 
 
-    def find_element(self, locator: tuple, timeout: int):
+    def find_element(self, locator: tuple, name: str, timeout: int):
         element = WebDriverWait(self._driver, timeout).\
                        until(EC.presence_of_element_located(locator), \
-                       message=f"Еlement not found.")
+                       message=f"Еlement {name} with {locator} locator is not found.")
+        if element:
+            Logger.debug(f"Еlement {name} with {locator} locator is found.")
         return element
     
 

@@ -27,6 +27,6 @@ cd Altoro_test
 
 ```bash
 
-pytest tests/test.py
+pytest test_auth_page.py
 
 ```

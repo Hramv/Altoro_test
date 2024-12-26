@@ -2,10 +2,12 @@ import pytest
 
 from tests.pages.AuthPage import AuthPage
 from tests.const.Constants import TestConst
+from framework.utils.Logger import Logger
 
 
 @pytest.fixture(scope="module")
 def auth_page():
+    Logger.set_level(10)      #DEBUG 10, INFO 20
     auth_page = AuthPage()
     yield auth_page
     auth_page.close_webdriver()

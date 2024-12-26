@@ -9,6 +9,7 @@ class BaseElement():
 
 
     def __init__(self, locator: tuple, name: str, timeout: int=1):
+
         self._driver = Driver()
         self._locator = locator
         self.name = name
@@ -16,9 +17,12 @@ class BaseElement():
 
 
     def get(self):
-        self.element = self._driver.find_element(self._locator, self._timeout)
+
+        self.element = self._driver.find_element(self._locator, self.name, self._timeout)
         return self.element
         
 
     def get_attribute(self, attribute: str):
-        return self.element.get_attribute(attribute)
+        
+        element_attribute = self.element.get_attribute(attribute)
+        return element_attribute

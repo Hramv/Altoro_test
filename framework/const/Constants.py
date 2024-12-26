@@ -8,7 +8,7 @@ class BrowserConst():
     FIREFOX = "firefox"
     CHROME  = "chrome"
     EDGE    = "edge"
-
+    
 
 class PageConst():
 
