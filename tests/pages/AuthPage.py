@@ -1,6 +1,29 @@
 from selenium.webdriver.common.by import By
 
-class AuthPage():
+from tests.const.Constants import AuthPageConst
+from framework.pages.BasePage import BasePage
+from framework.elements.TextBox import TextBox
+from framework.elements.Button import Button
+from framework.elements.TextElement import TextElement
+from framework.elements.Link import Link
+from framework.utils.Logger import Logger
+
+
+class AuthPageLocators():
+
+    SEARCH_FORM         = (By.ID, 'query')
+    USERNAME_FORM       = (By.ID, 'uid')
+    PASSWORD_FORM       = (By.ID, 'passw')
+
+    GO_BUTTON           = (By.CSS_SELECTOR, '[value="Go"]')
+    LOGIN_BUTTON        = (By.NAME, 'btnSubmit')
+    SIGNOFF_LINK        = (By.ID, 'LoginLink')
+
+    DIV_RESULT          = (By.CLASS_NAME, 'fl') 
+    INDEX_PAGE_LINK     = (By.LINK_TEXT, 'Online Banking with FREE Online Bill Pay')
+
+
+class AuthPage(BasePage):
 
     """
     A Authorization Class that describes methods for testing login and 
@@ -8,98 +31,104 @@ class AuthPage():
 
     Attributes
     ----------
-    ALTORO_URL
-        Altoromutual web-site url.
-    LOGIN_FAILED_STATUS: str
-        Message that appears when an authentication attempt fails.
 
     Methods
     -------
     __init__(self, driver: object)
         Instance initiation.
-    _get_signin_status(self) -> object  
-        Gets signIn status paragraph object.
-    open(self)
-       Opens web-site page.     
-    get_search_form(self) -> object
-        Gets search form object.
-    get_go_button(self) -> object
-        Gets go button object.
-    get_search_result(self) -> object
-        Gets search result paragraph object.
-    get_username_form(self) -> object
-        Gets username form object.
-    get_password_form(self) -> object
-        Gets password form object.
-    get_login_button(self) -> object
-        Gets login button form object.
-    send_to_search_form(self, message) -> str
-        Sends query for searching, and gets result.
+    is_opened(self, url)
+        Checks whether the page has opened.     
     sign_in(self, username: str, password: str) -> str
-        Sign in the web-site and gets status.
+        Sign in the web-site.
+    get_sign_in_result(self)
+        Gets sigin result.
     sign_off(self)
         Sign off the web-site.
+    login_failed(self)
+        Checks if login faled.
+    login_succes(self)
+        Check if login was successful.
+    send_to_search_form(self, message) -> str
+        Sends query for searching, and gets result.
     """
 
-    ALTORO_URL          = "http://www.altoromutual.com/login.jsp"
-    LOGIN_FAILED_STATUS = "Login Failed: We're sorry, but this username or \
-password was not found in our system. Please try again."
 
-    def __init__(self, driver: object):
-        self._driver = driver
-        self._url = self.ALTORO_URL
+    def __init__(self):
 
-    def _get_signin_status(self):
-        status = self._driver.find_element(by=By.CLASS_NAME, value="fl").\
-                            find_element(by=By.TAG_NAME, value="p")
-        if not status: 
-            status = self._driver.find_element(by=By.CLASS_NAME, value="fl").\
-                             find_element(by=By.TAG_NAME, value="h1")
-        return status
+        super().__init__(AuthPageConst.ALTORO_AUTH_URL)
 
-    def open(self):
-        self._driver.get(self._url)
-        self._driver.implicitly_wait(0.5)  
-    
-
-    def get_search_form(self):
-        return self._driver.find_element(by=By.ID, value="query")
-    
-    def get_go_button(self):
-        return self._driver.find_element(by=By.CSS_SELECTOR, value='[value="Go"]')
-
-    def get_search_result(self):
-        search_div = self._driver.find_element(by=By.CLASS_NAME, value="fl")
-        return search_div.find_element(by=By.TAG_NAME, value="p")
+        self.search_form = TextBox(AuthPageLocators.SEARCH_FORM, "search_form")
+        self.username_form = TextBox(AuthPageLocators.USERNAME_FORM, "username_form")
+        self.password_form = TextBox(AuthPageLocators.PASSWORD_FORM, "password_form")
+        self.go_button = Button(AuthPageLocators.GO_BUTTON, "go_button")
+        self.login_button = Button(AuthPageLocators.LOGIN_BUTTON, "login_button")
+        self.signoff_link = Link(AuthPageLocators.SIGNOFF_LINK, "signoff_link")
+        self.div_result = TextElement(AuthPageLocators.DIV_RESULT, "div_result")
+        self.index_page_link = Link(AuthPageLocators.INDEX_PAGE_LINK, "index_page_link")
 
 
-    def get_username_form(self):
-        return self._driver.find_element(by=By.ID, value="uid")
-    
-    def get_password_form(self):
-        return self._driver.find_element(by=By.ID, value="passw")
-    
-    def get_login_button(self):
-        return self._driver.find_element(by=By.NAME, value="btnSubmit")
-    
-    def send_to_search_form(self, message):
-
-        self.get_search_form().send_keys(message)
-        self.get_go_button().click()
-
-        return self.get_search_result().text
-    
+    def is_opened(self, url):
+        
+        match url:
+            case AuthPageConst.ALTORO_AUTH_URL:
+                self.username_form.get()
+                Logger.debug(f"Page {AuthPageConst.ALTORO_AUTH_URL} loaded.")
+                return True
+            case AuthPageConst.ALTORO_INDEX_URL:
+                self.index_page_link.get()
+                Logger.debug(f"Page {AuthPageConst.ALTORO_INDEX_URL} loaded.")
+                return True
+            case AuthPageConst.ALTORO_MAIN_URL:
+                self.div_result.get()
+                Logger.debug(f"Page {AuthPageConst.ALTORO_MAIN_URL} loaded.")
+                return True
+        
 
     def sign_in(self, username: str, password: str):
         
-        self.get_username_form().send_keys(username)
-        self.get_password_form().send_keys(password)
-        self.get_login_button().click()
-
-        return self._get_signin_status().text
+        self.username_form.get()
+        self.username_form.send(username)
+        self.password_form.get()
+        self.password_form.send(password)
+        self.login_button.get()
+        self.login_button.click()
     
+
+    def get_sign_in_result(self):
+
+        self.div_result.get()
+        
+        return self.div_result.get_text()
+      
 
     def sign_off(self):
-        self._driver.find_element(by=By.ID, value="LoginLink").click()
+
+        self.signoff_link.get()
+        self.signoff_link.click()
+
+
+    def login_failed(self):
+
+        sig_status = self.get_sign_in_result()
+        return sig_status.find(AuthPageConst.LOGIN_FAILED_STATUS) != -1
+
+
+    def login_success(self):
+
+        sig_status = self.get_sign_in_result()
+        return sig_status.find(AuthPageConst.LOGIN_SUCCES_STATUS) != -1  
+
     
-      
+    def send_to_search_form(self, message: str):
+        
+        self.search_form.get()
+        self.search_form.send(message)
+        self.go_button.get()
+        self.go_button.click()
+
+        self.div_result.get()
+
+        return self.div_result.get_text()
+
+
+    

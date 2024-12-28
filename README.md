@@ -10,15 +10,12 @@ The project implemented two information security test cases for checking input f
 
 ## Requirements
 
-python 3.12
+```bash
+pip3 install -r requirements.txt
+```
 
-pytest 7.4
-
-selenium 4.18
-
-geckodriver 0.35
-
-You need to install Firefox web-driver to "/usr/local/bin/geckodriver"
+You need to install web-driver https://pypi.org/project/selenium/
+The following drivers are supported: Firefox, Chrome, Edge.
 
 ## Install project
 
@@ -33,6 +30,6 @@ cd Altoro_test
 
 ```bash
 
-pytest tests/test.py
+pytest test_auth_page.py
 
 ```
