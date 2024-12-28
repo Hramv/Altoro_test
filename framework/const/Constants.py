@@ -12,4 +12,4 @@ class BrowserConst():
 
 class PageConst():
 
-    LOAD_TIME   = 1 #sec
+    LOAD_TIME   = 0.5 #sec

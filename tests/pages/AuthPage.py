@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 
 from tests.const.Constants import AuthPageConst
 from framework.pages.BasePage import BasePage
-from framework.elements.Form import Form
+from framework.elements.TextBox import TextBox
 from framework.elements.Button import Button
 from framework.elements.TextElement import TextElement
 from framework.elements.Link import Link
@@ -36,10 +36,18 @@ class AuthPage(BasePage):
     -------
     __init__(self, driver: object)
         Instance initiation.
+    is_opened(self, url)
+        Checks whether the page has opened.     
     sign_in(self, username: str, password: str) -> str
-        Sign in the web-site and gets status.
+        Sign in the web-site.
+    get_sign_in_result(self)
+        Gets sigin result.
     sign_off(self)
         Sign off the web-site.
+    login_failed(self)
+        Checks if login faled.
+    login_succes(self)
+        Check if login was successful.
     send_to_search_form(self, message) -> str
         Sends query for searching, and gets result.
     """
@@ -49,21 +57,31 @@ class AuthPage(BasePage):
 
         super().__init__(AuthPageConst.ALTORO_AUTH_URL)
 
-        self.search_form = Form(AuthPageLocators.SEARCH_FORM, "search_form")
-        self.username_form = Form(AuthPageLocators.USERNAME_FORM, "username_form")
-        self.password_form = Form(AuthPageLocators.PASSWORD_FORM, "password_form")
+        self.search_form = TextBox(AuthPageLocators.SEARCH_FORM, "search_form")
+        self.username_form = TextBox(AuthPageLocators.USERNAME_FORM, "username_form")
+        self.password_form = TextBox(AuthPageLocators.PASSWORD_FORM, "password_form")
         self.go_button = Button(AuthPageLocators.GO_BUTTON, "go_button")
         self.login_button = Button(AuthPageLocators.LOGIN_BUTTON, "login_button")
         self.signoff_link = Link(AuthPageLocators.SIGNOFF_LINK, "signoff_link")
         self.div_result = TextElement(AuthPageLocators.DIV_RESULT, "div_result")
         self.index_page_link = Link(AuthPageLocators.INDEX_PAGE_LINK, "index_page_link")
 
-    def open(self):
 
-        super().open()
-
-        self.username_form.get()            #page validation
-        Logger.debug(f"Page {AuthPageConst.ALTORO_AUTH_URL} loaded.") 
+    def is_opened(self, url):
+        
+        match url:
+            case AuthPageConst.ALTORO_AUTH_URL:
+                self.username_form.get()
+                Logger.debug(f"Page {AuthPageConst.ALTORO_AUTH_URL} loaded.")
+                return True
+            case AuthPageConst.ALTORO_INDEX_URL:
+                self.index_page_link.get()
+                Logger.debug(f"Page {AuthPageConst.ALTORO_INDEX_URL} loaded.")
+                return True
+            case AuthPageConst.ALTORO_MAIN_URL:
+                self.div_result.get()
+                Logger.debug(f"Page {AuthPageConst.ALTORO_MAIN_URL} loaded.")
+                return True
         
 
     def sign_in(self, username: str, password: str):
@@ -74,6 +92,10 @@ class AuthPage(BasePage):
         self.password_form.send(password)
         self.login_button.get()
         self.login_button.click()
+    
+
+    def get_sign_in_result(self):
+
         self.div_result.get()
         
         return self.div_result.get_text()
@@ -84,8 +106,17 @@ class AuthPage(BasePage):
         self.signoff_link.get()
         self.signoff_link.click()
 
-        self.index_page_link.get()          #page validation
-        Logger.debug(f"Page {AuthPageConst.ALTORO_INDEX_URL} loaded.")      
+
+    def login_failed(self):
+
+        sig_status = self.get_sign_in_result()
+        return sig_status.find(AuthPageConst.LOGIN_FAILED_STATUS) != -1
+
+
+    def login_success(self):
+
+        sig_status = self.get_sign_in_result()
+        return sig_status.find(AuthPageConst.LOGIN_SUCCES_STATUS) != -1  
 
     
     def send_to_search_form(self, message: str):

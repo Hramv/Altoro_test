@@ -1,6 +1,7 @@
 from time import sleep
-from tests.const.Constants import TestConst, AuthPageConst
+from tests.const.Constants import AuthPageConst
 from framework.utils.Logger import Logger
+from framework.utils.Driver import Driver
 
 
 def test_password_form_masking(auth_page):
@@ -10,7 +11,15 @@ def test_password_form_masking(auth_page):
     
     """
 
-    auth_page.open()
+    url = AuthPageConst.ALTORO_AUTH_URL
+
+    auth_page.open(AuthPageConst.ALTORO_AUTH_URL)
+    if not auth_page.is_opened(AuthPageConst.ALTORO_AUTH_URL):
+        assert False, f"An error occurred while trying to load the page\
+ {AuthPageConst.ALTORO_AUTH_URL}."
+    else:
+        Logger.debug(f"Page {AuthPageConst.ALTORO_AUTH_URL} loaded.") 
+
     auth_page.password_form.get()
     password_form_type = auth_page.password_form.get_attribute("type")
 
@@ -28,19 +37,25 @@ def test_default_creds(auth_page, default_creds_dict):
     
     for password in default_creds_dict[1]:
         for username in default_creds_dict[0]:
-            auth_page.open()
-            sig_status = auth_page.sign_in(username, password)
 
-            if sig_status.find(AuthPageConst.LOGIN_SUCCES_STATUS) != -1:
+            auth_page.open(AuthPageConst.ALTORO_AUTH_URL)
+            if not auth_page.is_opened(AuthPageConst.ALTORO_AUTH_URL):
+                assert False, f"An error occurred while trying to load the page\
+ {AuthPageConst.ALTORO_AUTH_URL}."
+                
+            auth_page.sign_in(username, password)
+            if auth_page.login_success():
                 default_creds.append([username, password])
-                Logger.debug(f"Page {AuthPageConst.ALTORO_AUTH_URL} loaded.") 
+                Logger.debug(f"Page {AuthPageConst.ALTORO_MAIN_URL} loaded.") 
                 auth_page.sign_off()
-            elif sig_status.find(AuthPageConst.LOGIN_FAILED_STATUS) != -1:
-                Logger.debug(f"Page {AuthPageConst.ALTORO_MAIN_URL} loaded.")
-            else:
-                Logger.debug(f"An error occurred while trying to load the page.")
-                assert False
 
+            elif auth_page.login_failed():
+                Logger.debug(f"Page {AuthPageConst.ALTORO_AUTH_URL} loaded.")
+            else:
+                assert False, f"An error occurred while trying to load the page\
+ {AuthPageConst.ALTORO_AUTH_URL}."
+
+            Driver.reload()
             sleep(AuthPageConst.TIME_OUT)
     
     assert not default_creds

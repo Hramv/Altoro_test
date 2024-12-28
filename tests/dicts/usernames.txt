@@ -1,1 +1,8 @@
+root
 admin
+test
+guest
+info
+user
+pass
+password

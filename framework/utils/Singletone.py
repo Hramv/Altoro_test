@@ -1,15 +1,14 @@
 
-def singleton(class_):
-
+class SingletonMeta(type):
     """
-    Singleton decorator.
+    The Singleton class.
     """
 
-    instances = {}
+    _instances = {}
 
-    def getinstance(*args, **kwargs):
-        if class_ not in instances:
-            instances[class_] = class_(*args, **kwargs)
-        return instances[class_]
-    
-    return getinstance
+    def __call__(cls, *args, **kwargs):
+        
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]

@@ -1,7 +1,7 @@
 
 class AuthPageConst():
 
-    TIME_OUT   = 1     #sec
+    TIME_OUT   = 0.5     #sec
     ALTORO_AUTH_URL          = "http://www.altoromutual.com/login.jsp"
     ALTORO_INDEX_URL         = "http://www.altoromutual.com/index.jsp"
     ALTORO_MAIN_URL          = "http://www.altoromutual.com/bank/main.jsp"

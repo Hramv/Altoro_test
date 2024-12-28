@@ -5,6 +5,8 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.edge.service import Service as EdgeService
 
+from framework.const.Constants import BrowserConst
+
 
 class Builder():
 
@@ -44,3 +46,22 @@ class Builder():
         service = EdgeService(executable_path=executable_path)
         options = EdgeOptions()
         return Edge(service=service, options=options)
+    
+    @staticmethod
+    def builder(executable_path: str=BrowserConst.EXECUTABEL_PATH):
+
+        """
+        WebDriver Builder.
+        """
+
+        match BrowserConst.BROWSER:
+            case BrowserConst.FIREFOX:
+                return Builder.firefox_driver(executable_path)
+            case BrowserConst.CHROME:
+                return Builder.chrome_driver(executable_path)
+            case BrowserConst.EDGE:
+                return Builder.edge_driver(executable_path)
+            case _:
+                error_message = f"{BrowserConst.BROWSER} is not supported. Cannot build WebDriver."
+                Logger.error(error_message)
+                raise ValueError(error_message)

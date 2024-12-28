@@ -10,9 +10,12 @@ The project implemented two information security test cases for checking input f
 
 ## Requirements
 
+```bash
+pip3 install -r requirements.txt
+```
 
 You need to install web-driver https://pypi.org/project/selenium/
-
+The following drivers are supported: Firefox, Chrome, Edge.
 
 ## Install project
 

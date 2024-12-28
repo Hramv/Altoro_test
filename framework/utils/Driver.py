@@ -1,56 +1,62 @@
-from framework.utils.Singletone import singleton
+from framework.utils.Singletone import SingletonMeta
 from framework.utils.Drivers_builders import Builder
-from framework.const.Constants import BrowserConst
 from framework.utils.Logger import Logger
+from framework.const.Constants import PageConst
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-@singleton
-class Driver():
+
+class Driver(metaclass=SingletonMeta):
 
     """
         A Driver Class. 
     """
 
-    def __init__(self, executable_path: str=BrowserConst.EXECUTABEL_PATH):
+    def __init__(self):
 
-        match BrowserConst.BROWSER:
-            case BrowserConst.FIREFOX:
-                self._driver = Builder.firefox_driver(executable_path)
-            case BrowserConst.CHROME:
-                self._driver = Builder.chrome_driver(executable_path)
-            case BrowserConst.EDGE:
-                self._driver = Builder.edge_driver(executable_path)
-            case _:
-                error_message = f"{BrowserConst.BROWSER} is not supported. Cannot build WebDriver."
-                Logger.error(error_message)
-                raise ValueError(error_message)
+        self._driver = Builder.builder()
 
+    @staticmethod
+    def get_instance():
+        
+        return Driver._instances[Driver]
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
+    @staticmethod
+    def open_page(url):
 
+        self = Driver.get_instance()
 
-    def open_page(self, url):
         try:
             self._driver.get(url)
         except:
             Logger.error(f"An error occurred while trying to load the page {url}.")
             self.close()
 
+    @staticmethod
+    def find_element(locator: tuple, name: str):
 
-    def find_element(self, locator: tuple, name: str, timeout: int):
-        element = WebDriverWait(self._driver, timeout).\
+        self = Driver.get_instance()
+
+        element = WebDriverWait(self._driver, PageConst.LOAD_TIME).\
                        until(EC.presence_of_element_located(locator), \
                        message=f"Еlement {name} with {locator} locator is not found.")
         if element:
             Logger.debug(f"Еlement {name} with {locator} locator is found.")
         return element
     
+    @staticmethod
+    def close():
 
-    def close(self):
+        self = Driver.get_instance()
         self._driver.quit()
+
+    @staticmethod
+    def reload():
+        
+        self = Driver.get_instance()
+        self.close()
+        self.__init__()
 
 
     

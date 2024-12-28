@@ -1,4 +1,5 @@
 from framework.utils.Driver import Driver
+from framework.const.Constants import PageConst
 
 
 class BaseElement():
@@ -8,17 +9,15 @@ class BaseElement():
     """
 
 
-    def __init__(self, locator: tuple, name: str, timeout: int=1):
+    def __init__(self, locator: tuple, name: str,):
 
-        self._driver = Driver()
         self._locator = locator
         self.name = name
-        self._timeout = timeout
 
 
     def get(self):
 
-        self.element = self._driver.find_element(self._locator, self.name, self._timeout)
+        self.element = Driver.find_element(self._locator, self.name)
         return self.element
         
 
@@ -26,3 +25,11 @@ class BaseElement():
         
         element_attribute = self.element.get_attribute(attribute)
         return element_attribute
+    
+
+    def get_text(self):
+        return self.element.text
+    
+
+    def click(self):
+        self.element.click()

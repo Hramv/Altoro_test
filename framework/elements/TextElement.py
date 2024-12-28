@@ -10,7 +10,3 @@ class TextElement(BaseElement):
 
     def __init__(self, locator: tuple, name: str):
         super().__init__(locator, name)
-
-
-    def get_text(self):
-        return self.element.text
